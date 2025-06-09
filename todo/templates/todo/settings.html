@@ -1,0 +1,46 @@
+{% extends 'todo/base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h2 class="card-title h4 mb-0">
+                        <i class="fas fa-cog me-2"></i>設定
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <label for="idle_timeout" class="form-label">
+                                <i class="fas fa-clock me-2"></i>閒置自動登出時間
+                            </label>
+                            <select name="idle_timeout" id="idle_timeout" class="form-select">
+                                <option value="0" {% if idle_timeout == 0 %}selected{% endif %}>不自動登出</option>
+                                <option value="30" {% if idle_timeout == 30 %}selected{% endif %}>30秒</option>
+                                <option value="60" {% if idle_timeout == 60 %}selected{% endif %}>1分鐘</option>
+                                <option value="300" {% if idle_timeout == 300 %}selected{% endif %}>5分鐘</option>
+                                <option value="600" {% if idle_timeout == 600 %}selected{% endif %}>10分鐘</option>
+                                <option value="900" {% if idle_timeout == 900 %}selected{% endif %}>15分鐘</option>
+                                <option value="1800" {% if idle_timeout == 1800 %}selected{% endif %}>30分鐘</option>
+                                <option value="3600" {% if idle_timeout == 3600 %}selected{% endif %}>1小時</option>
+                            </select>
+                            <div class="form-text">選擇系統在閒置多久後自動登出</div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'todo_list' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>返回
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>儲存設定
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,280 @@
+{% extends 'todo/base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0"><i class="fas fa-tasks me-2"></i>待辦事項</h2>
+    <a href="{% url 'trash_bin' %}" class="btn btn-outline-secondary">
+        <i class="fas fa-trash me-2"></i>垃圾桶
+    </a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="{{ form.title.id_for_label }}" class="form-label">
+                            <i class="fas fa-heading me-2"></i>標題
+                        </label>
+                        {{ form.title }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="{{ form.date.id_for_label }}" class="form-label">
+                            <i class="fas fa-calendar me-2"></i>日期
+                        </label>
+                        {{ form.date }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="{{ form.time.id_for_label }}" class="form-label">
+                            <i class="fas fa-clock me-2"></i>時間
+                        </label>
+                        {{ form.time }}
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12">
+                    <div class="form-group d-flex align-items-center">
+                        <label for="{{ form.description.id_for_label }}" class="form-label me-2 mb-0">
+                            <i class="fas fa-align-left me-2"></i>描述
+                        </label>
+                        <div class="flex-grow-1">
+                            {{ form.description }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>新增任務
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h3 class="card-title h5 mb-0">
+                    <i class="fas fa-list me-2"></i>未完成任務
+                </h3>
+            </div>
+            <div class="card-body">
+                {% if tasks %}
+                    <div class="list-group list-group-flush">
+                        {% for task in tasks %}
+                            <div class="list-group-item px-0">
+                                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                                    <div class="task-content mb-2 mb-md-0">
+                                        <h5 class="task-title mb-1">{{ task.title }}</h5>
+                                        <p class="mb-1 text-muted">
+                                            <small>
+                                                <i class="fas fa-calendar me-1"></i>{{ task.date }}
+                                                <i class="fas fa-clock ms-2 me-1"></i>{{ task.time }}
+                                            </small>
+                                        </p>
+                                        {% if task.description %}
+                                            <p class="task-description mb-0 text-muted">{{ task.description }}</p>
+                                        {% endif %}
+                                    </div>
+                                    <div class="task-actions">
+                                        <a href="{% url 'edit_task' task.id %}" class="btn btn-primary btn-sm me-2">
+                                            <i class="fas fa-edit me-1"></i>編輯
+                                        </a>
+                                        <a href="{% url 'toggle_task' task.id %}" class="btn btn-success btn-sm me-2">
+                                            <i class="fas fa-check me-1"></i>完成
+                                        </a>
+                                        <a href="{% url 'delete_task' task.id %}" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash me-1"></i>刪除
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    {% if tasks.paginator.num_pages > 1 %}
+                        <nav class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                {% if tasks.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=1">&laquo; 第一頁</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ tasks.previous_page_number }}">上一頁</a>
+                                    </li>
+                                {% endif %}
+                                
+                                <li class="page-item active">
+                                    <span class="page-link">
+                                        第 {{ tasks.number }} 頁，共 {{ tasks.paginator.num_pages }} 頁
+                                    </span>
+                                </li>
+                                
+                                {% if tasks.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ tasks.next_page_number }}">下一頁</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ tasks.paginator.num_pages }}">最後一頁 &raquo;</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    {% endif %}
+                {% else %}
+                    <div class="alert alert-info mb-0">
+                        <i class="fas fa-info-circle me-2"></i>目前沒有未完成的任務
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 mt-4 mt-lg-0">
+        <div class="card">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h3 class="card-title h5 mb-0">
+                    <i class="fas fa-check-circle me-2"></i>已完成任務
+                </h3>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-warning btn-sm" id="restoreSelected" title="還原選取">
+                        <i class="fas fa-undo"></i>
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm" id="deleteSelected" title="刪除選取">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if completed_tasks %}
+                    <form id="completedTasksForm" method="post" action="{% url 'batch_action' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" id="batchAction" value="">
+                        <div class="list-group list-group-flush">
+                            {% for task in completed_tasks %}
+                                <div class="list-group-item px-0 task-item" data-task-id="{{ task.id }}">
+                                    <div class="d-flex flex-column">
+                                        <div class="task-content mb-2">
+                                            <div class="d-flex align-items-center">
+                                                <h5 class="task-title mb-0 text-muted me-2"><s>{{ task.title }}</s></h5>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-calendar me-1"></i>{{ task.date }}
+                                                    <i class="fas fa-clock ms-2 me-1"></i>{{ task.time }}
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="task-actions">
+                                            <a href="{% url 'edit_task' task.id %}" class="btn btn-primary btn-sm me-2">
+                                                <i class="fas fa-edit me-1"></i>編輯
+                                            </a>
+                                            <a href="{% url 'toggle_task' task.id %}" class="btn btn-warning btn-sm me-2">
+                                                <i class="fas fa-undo me-1"></i>取消完成
+                                            </a>
+                                            <a href="{% url 'delete_task' task.id %}" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-trash me-1"></i>刪除
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </form>
+                {% else %}
+                    <div class="alert alert-info mb-0">
+                        <i class="fas fa-info-circle me-2"></i>目前沒有已完成的任務
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const taskItems = document.querySelectorAll('.task-item');
+    const restoreBtn = document.getElementById('restoreSelected');
+    const deleteBtn = document.getElementById('deleteSelected');
+    const form = document.getElementById('completedTasksForm');
+    const batchAction = document.getElementById('batchAction');
+    let selectedTasks = new Set();
+
+    taskItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            // 如果點擊的是按鈕或按鈕內的圖標，不處理選取
+            if (e.target.closest('.btn')) {
+                return;
+            }
+            
+            const taskId = this.dataset.taskId;
+            if (selectedTasks.has(taskId)) {
+                selectedTasks.delete(taskId);
+                this.classList.remove('selected');
+            } else {
+                selectedTasks.add(taskId);
+                this.classList.add('selected');
+            }
+        });
+    });
+
+    restoreBtn.addEventListener('click', function() {
+        if (selectedTasks.size === 0) {
+            alert('請先選取要還原的任務');
+            return;
+        }
+        batchAction.value = 'restore';
+        submitBatchAction();
+    });
+
+    deleteBtn.addEventListener('click', function() {
+        if (selectedTasks.size === 0) {
+            alert('請先選取要刪除的任務');
+            return;
+        }
+        if (confirm('確定要刪除選取的任務嗎？')) {
+            batchAction.value = 'delete';
+            submitBatchAction();
+        }
+    });
+
+    function submitBatchAction() {
+        const taskIds = Array.from(selectedTasks);
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'task_ids';
+        input.value = JSON.stringify(taskIds);
+        form.appendChild(input);
+        form.submit();
+    }
+});
+</script>
+
+<style>
+.task-item {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.task-item.selected {
+    background-color: #ffe6e6;
+}
+
+.task-item:hover {
+    background-color: #f8f9fa;
+}
+
+.task-item.selected:hover {
+    background-color: #ffe6e6;
+}
+</style>
+{% endblock %}
+{% endblock %} 

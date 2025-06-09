@@ -1,0 +1,50 @@
+{% extends 'todo/base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0"><i class="fas fa-trash me-2"></i>垃圾桶</h2>
+    <a href="{% url 'todo_list' %}" class="btn btn-outline-primary">
+        <i class="fas fa-arrow-left me-2"></i>返回待辦事項
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if deleted_tasks %}
+            <div class="list-group list-group-flush">
+                {% for task in deleted_tasks %}
+                    <div class="list-group-item px-0">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                            <div class="task-content mb-2 mb-md-0">
+                                <h5 class="task-title mb-1">{{ task.title }}</h5>
+                                <p class="mb-1 text-muted">
+                                    <small>
+                                        <i class="fas fa-calendar me-1"></i>{{ task.date }}
+                                        <i class="fas fa-clock ms-2 me-1"></i>{{ task.time }}
+                                    </small>
+                                </p>
+                                {% if task.description %}
+                                    <p class="task-description mb-0 text-muted">{{ task.description }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="task-actions">
+                                <a href="{% url 'restore_task' task.id %}" class="btn btn-success btn-sm me-2">
+                                    <i class="fas fa-undo me-1"></i>還原
+                                </a>
+                                <a href="{% url 'permanent_delete_task' task.id %}" class="btn btn-danger btn-sm" 
+                                   onclick="return confirm('確定要永久刪除這個任務嗎？')">
+                                    <i class="fas fa-trash-alt me-1"></i>永久刪除
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info mb-0">
+                <i class="fas fa-info-circle me-2"></i>垃圾桶是空的
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 
