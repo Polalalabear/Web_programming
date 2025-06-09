@@ -10,6 +10,6 @@ urlpatterns = [
     path('permanent-delete/<int:task_id>/', views.permanent_delete_task, name='permanent_delete_task'),
     path('edit/<int:task_id>/', views.edit_task, name='edit_task'),
     path('settings/', views.settings_view, name='settings'),
-    path('register/', views.register, name='register'),
+    path('register/', views.register_view, name='register'),
     path('batch-action/', views.batch_action, name='batch_action'),
 ] 

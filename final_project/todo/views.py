@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.utils import timezone
@@ -8,17 +8,37 @@ from datetime import date, datetime, timedelta
 from .models import Task, UserSettings
 from .forms import TaskForm, UserRegistrationForm
 import json
+from django.contrib.auth.models import User
+from django.db import IntegrityError
 
-def register(request):
+def register_view(request):
     if request.method == 'POST':
-        form = UserRegistrationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('todo_list')
-    else:
-        form = UserRegistrationForm()
-    return render(request, 'todo/register.html', {'form': form})
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+        
+        # 檢查使用者名稱是否已存在
+        if User.objects.filter(username=username).exists():
+            messages.error(request, '使用者名稱已存在')
+            return render(request, 'todo/register.html', {'username': username})
+        
+        # 檢查密碼是否相符
+        if password != confirm_password:
+            messages.error(request, '兩次輸入的密碼不相符')
+            return render(request, 'todo/register.html', {'username': username})
+        
+        try:
+            # 創建新使用者
+            user = User.objects.create_user(username=username, password=password)
+            # 創建使用者設定
+            UserSettings.objects.create(user=user)
+            messages.success(request, '註冊成功！請登入')
+            return redirect('login')
+        except IntegrityError:
+            messages.error(request, '註冊失敗，請稍後再試')
+            return render(request, 'todo/register.html', {'username': username})
+            
+    return render(request, 'todo/register.html')
 
 @login_required
 def todo_list(request):
@@ -152,3 +172,18 @@ def batch_action(request):
             return redirect('trash_bin')
             
     return redirect('todo_list')
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            # 設置閒置超時時間
+            user_settings, created = UserSettings.objects.get_or_create(user=user)
+            request.session['idle_timeout'] = user_settings.idle_timeout
+            return redirect('todo_list')
+        else:
+            messages.error(request, '使用者名稱或密碼錯誤')
+    return render(request, 'todo/login.html')

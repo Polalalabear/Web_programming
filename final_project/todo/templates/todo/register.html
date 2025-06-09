@@ -5,42 +5,54 @@
     <div class="col-md-6 offset-md-3">
         <div class="card">
             <div class="card-header">
-                <h4 class="mb-0"><i class="fas fa-user-plus me-2"></i>Register</h4>
+                <h4 class="mb-0"><i class="fas fa-user-plus me-2"></i>註冊</h4>
             </div>
             <div class="card-body">
                 <form method="post">
                     {% csrf_token %}
-                    {% for field in form %}
                     <div class="mb-3">
-                        <label for="{{ field.id_for_label }}" class="form-label">
-                            {% if field.name == 'username' %}
-                                <i class="fas fa-user me-2"></i>
-                            {% elif field.name == 'email' %}
-                                <i class="fas fa-envelope me-2"></i>
-                            {% elif 'password' in field.name %}
-                                <i class="fas fa-lock me-2"></i>
-                            {% endif %}
-                            {{ field.label }}
+                        <label for="username" class="form-label">
+                            <i class="fas fa-user me-2"></i>使用者名稱
                         </label>
-                        {{ field }}
-                        {% if field.errors %}
-                        <div class="text-danger mt-1">
-                            {% for error in field.errors %}
-                                <small><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</small>
-                            {% endfor %}
-                        </div>
-                        {% endif %}
+                        <input type="text" class="form-control {% if messages and '使用者名稱已存在' in messages|stringformat:'s' %}is-invalid{% endif %}" 
+                               id="username" name="username" value="{{ username }}" required>
+                        {% for message in messages %}
+                            {% if '使用者名稱已存在' in message.message %}
+                                <div class="invalid-feedback d-block">
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ message.message }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
                     </div>
-                    {% endfor %}
+                    <div class="mb-3">
+                        <label for="password" class="form-label">
+                            <i class="fas fa-lock me-2"></i>密碼
+                        </label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirm_password" class="form-label">
+                            <i class="fas fa-lock me-2"></i>確認密碼
+                        </label>
+                        <input type="password" class="form-control {% if messages and '兩次輸入的密碼不相符' in messages|stringformat:'s' %}is-invalid{% endif %}" 
+                               id="confirm_password" name="confirm_password" required>
+                        {% for message in messages %}
+                            {% if '兩次輸入的密碼不相符' in message.message %}
+                                <div class="invalid-feedback d-block">
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ message.message }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                     <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-user-plus me-2"></i>Register
+                        <i class="fas fa-user-plus me-2"></i>註冊
                     </button>
                 </form>
                 <div class="text-center mt-4">
                     <p class="mb-0">
-                        Already have an account? 
+                        已經有帳號了嗎？ 
                         <a href="{% url 'login' %}" class="text-decoration-none">
-                            <i class="fas fa-sign-in-alt me-1"></i>Login here
+                            <i class="fas fa-sign-in-alt me-1"></i>登入
                         </a>
                     </p>
                 </div>
