@@ -121,16 +121,6 @@ python manage.py runserver
 - 美觀的圖示
 - 清晰的視覺層次
 
-## 開發者
-
-- 作者：Polalalabear
-- 專案：Web Programming 期末專案
-- GitHub：[專案連結](https://github.com/Polalalabear/Web_programming/tree/main/final_project)
-
-## 授權
-
-本專案採用 MIT 授權條款。詳見 [LICENSE](LICENSE) 檔案。
-
 ## 管理員設置
 
 ### 創建管理員帳號
@@ -140,9 +130,9 @@ python3 manage.py shell
 ```
 
 2. 創建管理員帳號：
-```python
-from django.contrib.auth.models import User
-User.objects.create_superuser('admin', 'admin@example.com', '你的密碼')
+```bash
+# 創建管理員帳號
+python3 manage.py createsuperuser
 ```
 
 3. 訪問管理界面：
@@ -155,10 +145,7 @@ User.objects.create_superuser('admin', 'admin@example.com', '你的密碼')
 - 查看用戶設置
 - 系統管理 
 
-    ```bash
-    # 初始化數據庫
-    python3 manage.py migrate
-
-    # 創建管理員帳號
-    python3 manage.py createsuperuser
-    ```
+```bash
+# 初始化資料庫
+python3 manage.py migrate
+```
