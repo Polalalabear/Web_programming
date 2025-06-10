@@ -33,7 +33,7 @@
 
 - Python 3.9
 - Django 4.2
-- SQLite 數據庫
+- SQLite 資料庫
 - HTML5/CSS3
 - Bootstrap 5
 - Font Awesome 5
@@ -60,7 +60,7 @@ venv\Scripts\activate  # Windows
 pip install -r requirements.txt
 ```
 
-4. 運行數據庫遷移
+4. 運行資料庫遷移
 ```bash
 python manage.py migrate
 ```
@@ -129,4 +129,28 @@ python manage.py runserver
 
 ## 授權
 
-本專案採用 MIT 授權條款。詳見 [LICENSE](LICENSE) 檔案。 
+本專案採用 MIT 授權條款。詳見 [LICENSE](LICENSE) 檔案。
+
+## 管理員設置
+
+### 創建管理員帳號
+1. 進入 Django shell：
+```bash
+python3 manage.py shell
+```
+
+2. 創建管理員帳號：
+```python
+from django.contrib.auth.models import User
+User.objects.create_superuser('admin', 'admin@example.com', '你的密碼')
+```
+
+3. 訪問管理界面：
+- 網址：http://localhost:8000/admin/
+- 使用創建的管理員帳號登入
+
+### 管理員功能
+- 查看所有用戶
+- 管理所有任務
+- 查看用戶設置
+- 系統管理 
