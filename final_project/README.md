@@ -155,12 +155,10 @@ User.objects.create_superuser('admin', 'admin@example.com', '你的密碼')
 - 查看用戶設置
 - 系統管理 
 
-# 初始化數據庫
-python3 manage.py migrate
+    ```bash
+    # 初始化數據庫
+    python3 manage.py migrate
 
-# 創建管理員帳號
-python3 manage.py createsuperuser
-# 按照提示輸入：
-# - 用戶名
-# - 電子郵件（可選）
-# - 密碼（需要輸入兩次） 
+    # 創建管理員帳號
+    python3 manage.py createsuperuser
+    ```
