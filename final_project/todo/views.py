@@ -155,7 +155,7 @@ def batch_action(request):
         task_ids = json.loads(request.POST.get('task_ids', '[]'))
         
         if action == 'restore':
-            Task.objects.filter(id__in=task_ids, user=request.user).update(completed=False)
+            Task.objects.filter(id__in=task_ids, user=request.user).update(is_deleted=False)
             messages.success(request, '已成功還原選取的任務')
             return redirect('todo_list')
         elif action == 'delete':
@@ -187,3 +187,6 @@ def login_view(request):
         else:
             messages.error(request, '使用者名稱或密碼錯誤')
     return render(request, 'todo/login.html')
+
+def handler404(request, exception):
+    return render(request, 'todo/404.html', status=404)

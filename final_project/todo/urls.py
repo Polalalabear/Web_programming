@@ -12,4 +12,6 @@ urlpatterns = [
     path('settings/', views.settings_view, name='settings'),
     path('register/', views.register_view, name='register'),
     path('batch-action/', views.batch_action, name='batch_action'),
-] 
+]
+
+handler404 = 'todo.views.handler404' 

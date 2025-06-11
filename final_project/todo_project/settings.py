@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-l8ybo_m1w-)19hrfsx$y_hqc1c^koued+!#%e4u+q3$szqm(a@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -126,3 +126,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'todo_list'
 LOGIN_URL = 'login'
 LOGOUT_REDIRECT_URL = 'login'
+
+# 自定義錯誤頁面
+handler404 = 'todo.views.handler404'
